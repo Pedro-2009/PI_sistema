@@ -1,0 +1,64 @@
+:root {
+  /* Cores principais */
+  --primary-blue: #003366;
+  --secondary-yellow: #FFD100;
+  --neutral-white: #FFFFFF;
+  --light-gray: #F5F5F5;
+
+  /* Fontes */
+  --font-main: 'Poppins', sans-serif;
+}
+
+/* Reset básico */
+body {
+  font-family: var(--font-main);
+  background-color: var(--light-gray);
+  color: #333;
+  margin: 0;
+  padding: 0;
+}
+
+/* Navbar */
+.navbar {
+  background-color: var(--primary-blue);
+}
+
+.navbar a {
+  color: var(--neutral-white) !important;
+}
+
+.navbar a:hover {
+  color: var(--secondary-yellow) !important;
+}
+
+/* Botões */
+.btn-primary {
+  background-color: var(--primary-blue);
+  border: none;
+}
+
+.btn-primary:hover {
+  background-color: var(--secondary-yellow);
+  color: var(--primary-blue);
+  transition: 0.3s;
+}
+
+/* Títulos */
+h1, h2, h3 {
+  color: var(--primary-blue);
+}
+
+/* Cards */
+.card {
+  border: 1px solid var(--secondary-yellow);
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+/* Rodapé */
+footer {
+  background-color: var(--primary-blue);
+  color: var(--neutral-white);
+  padding: 1rem 0;
+  text-align: center;
+}
