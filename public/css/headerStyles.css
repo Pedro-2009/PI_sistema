@@ -1,0 +1,29 @@
+/* === Estilo padrão do Sesc Esports === */
+.sesc-navbar {
+  background-color: #0056b3 !important; /* Azul escuro */
+}
+
+.sesc-navbar .nav-link {
+  color: white !important;
+  font-weight: 500;
+  transition: 0.3s;
+}
+
+.sesc-navbar .nav-link:hover,
+.sesc-navbar .nav-link.active {
+  color: #ffcc00 !important; /* Amarelo destaque */
+}
+
+.dropdown-menu {
+  background-color: #0056b3;
+  border: none;
+}
+
+.dropdown-item {
+  color: #fff !important;
+}
+
+.dropdown-item:hover {
+  background-color: #ffcc00 !important;
+  color: #003366 !important;
+}

@@ -1,0 +1,39 @@
+/* === Footer padrão do Sesc Esports === */
+footer.footer {
+  background-color: #0056b3; /* Azul principal */
+  color: #ffffff;
+  font-size: 0.95rem;
+}
+
+footer.footer h5,
+footer.footer h6 {
+  color: #ffcc00; /* Amarelo destaque */
+}
+
+footer.footer a {
+  color: #ffffff;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+footer.footer a:hover {
+  color: #ffcc00;
+}
+
+footer.footer hr {
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+footer.footer p {
+  margin-bottom: 0;
+}
+
+/* Ícones de redes sociais */
+footer.footer .bi {
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+footer.footer .bi:hover {
+  transform: scale(1.15);
+  color: #ffcc00;
+}
