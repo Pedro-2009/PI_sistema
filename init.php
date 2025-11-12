@@ -1,36 +1,50 @@
 <?php
 /**
- * INIT — Inicialização global do Sesc Esports
- * -------------------------------------------
- * Este arquivo prepara o ambiente básico para todas as páginas do sistema:
- * - Inicia a sessão (se necessário)
- * - Carrega o config.php e arquivos essenciais do sistema
- * - Garante que funções, banco de dados e constantes estejam disponíveis
+ * INIT — Inicializador do sistema Sesc Esports
+ * --------------------------------------------
+ * Este arquivo é responsável por carregar todas as dependências principais
+ * e garantir que as sessões, configurações e conexões estejam prontas.
+ *
+ * ➤ Deve ser incluído no início de TODAS as páginas do sistema.
  */
 
-// 🧠 Inicia sessão, se ainda não estiver ativa
+ // =========================================
+ // 🔧 Carregamento dos arquivos principais
+ // =========================================
+require_once(__DIR__ . '/config.php');
+require_once(INC_PATH . '/database.php');
+require_once(INC_PATH . '/globalFunctions.php');
+
+// =========================================
+// 🧠 Sessão
+// =========================================
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// 🧩 Carrega o arquivo de configuração principal
-require_once(__DIR__ . '/config.php');
+// =========================================
+// 💾 Conexão com o banco de dados
+// =========================================
+$conn = open_database();
 
-// 📦 Inclui arquivos essenciais
-require_once(INC_PATH . '/database.php');
-require_once(INC_PATH . '/globalFunctions.php');
-
-// 🔒 Função de segurança opcional (exemplo de controle de acesso)
-function requireLogin($redirect = '/login.php') {
-    if (empty($_SESSION['user'])) {
-        header("Location: " . BASE_URL . $redirect);
-        exit;
-    }
+if (!$conn) {
+    echo "<div style='color: red; font-weight: bold; text-align:center; margin-top:20px;'>
+            Erro ao conectar ao banco de dados.
+          </div>";
+    exit;
 }
 
-// ⚙️ Configura timezone padrão
-date_default_timezone_set('America/Sao_Paulo');
+// =========================================
+// 📦 Constantes de Template
+// =========================================
+if (!defined('HEADER_TEMPLATE')) {
+    define('HEADER_TEMPLATE', INC_PATH . '/header.php');
+}
+if (!defined('FOOTER_TEMPLATE')) {
+    define('FOOTER_TEMPLATE', INC_PATH . '/footer.php');
+}
 
-// ✅ Ambiente pronto para uso
-// A partir daqui, qualquer arquivo que inclua "init.php"
-// já terá acesso a: sessão ativa, DB, funções globais e constantes.
+// =========================================
+// ✅ Sistema inicializado com sucesso
+// =========================================
+// echo "<!-- Sistema inicializado com sucesso (Sesc Esports) -->";

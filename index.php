@@ -1,107 +1,107 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <title>Jornal Online</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+<?php
+require_once(__DIR__ . '/config.php');
+include(HEADER_TEMPLATE);
+?>
 
-    <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<main class="flex-grow-1">
 
-    <!-- Custom CSS -->
-    <style>
-        body {
-            background-color: #f8f9fa;
-        }
-        /* Banner */
-        .banner {
-            position: relative;
-            overflow: hidden;
-            height: 400px;
-            margin-bottom: 50px;
-        }
-        .banner img {
-            width: 100%;
-            height: 400px;
-            object-fit: cover;
-            position: absolute;
-            top: 0;
-            left: 0;
-            opacity: 0;
-            transition: opacity 1s ease-in-out;
-        }
-        .banner img.active {
-            opacity: 1;
-        }
-        /* Cards */
-        .card:hover {
-            transform: translateY(-5px);
-            transition: transform 0.3s ease;
-            cursor: pointer;
-        }
-    </style>
-</head>
-<body>
-
-<!-- Banner -->
-<div class="banner">
-    <img src="https://source.unsplash.com/1200x400/?news,city" class="active" alt="Banner 1">
-    <img src="https://source.unsplash.com/1200x400/?news,technology" alt="Banner 2">
-    <img src="https://source.unsplash.com/1200x400/?news,sports" alt="Banner 3">
-</div>
-
-<!-- Cards Section -->
-<div class="container">
-    <div class="row g-4">
-        <div class="col-md-4">
-            <div class="card h-100">
-                <img src="https://source.unsplash.com/400x300/?news,politics" class="card-img-top" alt="Notícia 1">
-                <div class="card-body">
-                    <h5 class="card-title">Notícia 1</h5>
-                    <p class="card-text">Resumo da notícia 1 para deixar o usuário interessado.</p>
-                    <a href="#" class="btn btn-primary">Leia Mais</a>
-                </div>
-            </div>
+  <!-- Banner Principal -->
+  <section class="banner position-relative overflow-hidden mb-5">
+    <div id="bannerCarousel" class="carousel slide" data-bs-ride="carousel">
+      <div class="carousel-inner">
+        <div class="carousel-item active">
+          <img src="https://source.unsplash.com/1600x500/?sports,stadium" class="d-block w-100" alt="Esportes">
+          <div class="carousel-caption d-none d-md-block bg-dark bg-opacity-50 rounded p-3">
+            <h2 class="fw-bold text-warning">Grandes Jogos da Semana</h2>
+            <p>Confira os destaques esportivos mais recentes do Sesc Esports.</p>
+          </div>
         </div>
-        <div class="col-md-4">
-            <div class="card h-100">
-                <img src="https://source.unsplash.com/400x300/?news,science" class="card-img-top" alt="Notícia 2">
-                <div class="card-body">
-                    <h5 class="card-title">Notícia 2</h5>
-                    <p class="card-text">Resumo da notícia 2 para deixar o usuário interessado.</p>
-                    <a href="#" class="btn btn-primary">Leia Mais</a>
-                </div>
-            </div>
+
+        <div class="carousel-item">
+          <img src="https://source.unsplash.com/1600x500/?soccer,match" class="d-block w-100" alt="Futebol">
+          <div class="carousel-caption d-none d-md-block bg-dark bg-opacity-50 rounded p-3">
+            <h2 class="fw-bold text-warning">Cobertura Especial: Torneio Escolar</h2>
+            <p>Os melhores momentos das competições entre as escolas do Sesc.</p>
+          </div>
         </div>
-        <div class="col-md-4">
-            <div class="card h-100">
-                <img src="https://source.unsplash.com/400x300/?news,world" class="card-img-top" alt="Notícia 3">
-                <div class="card-body">
-                    <h5 class="card-title">Notícia 3</h5>
-                    <p class="card-text">Resumo da notícia 3 para deixar o usuário interessado.</p>
-                    <a href="#" class="btn btn-primary">Leia Mais</a>
-                </div>
-            </div>
+
+        <div class="carousel-item">
+          <img src="https://source.unsplash.com/1600x500/?basketball,arena" class="d-block w-100" alt="Basquete">
+          <div class="carousel-caption d-none d-md-block bg-dark bg-opacity-50 rounded p-3">
+            <h2 class="fw-bold text-warning">Basquete em Alta</h2>
+            <p>Veja como os alunos se destacaram na última rodada de jogos.</p>
+          </div>
         </div>
+      </div>
+
+      <button class="carousel-control-prev" type="button" data-bs-target="#bannerCarousel" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+      </button>
+      <button class="carousel-control-next" type="button" data-bs-target="#bannerCarousel" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+      </button>
     </div>
-</div>
+  </section>
 
-<!-- Bootstrap JS & dependencies -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Notícias em Destaque -->
+  <section class="container mb-5">
+    <h3 class="fw-bold border-bottom pb-2 mb-4 text-sesc-blue">Destaques</h3>
+    <div class="row g-4">
+      <div class="col-md-4">
+        <div class="card shadow-sm h-100">
+          <img src="https://source.unsplash.com/500x300/?soccer" class="card-img-top" alt="Notícia 1">
+          <div class="card-body">
+            <h5 class="card-title fw-semibold">Final do Torneio de Futebol</h5>
+            <p class="card-text">A final entre as turmas do ensino médio foi marcada por muita emoção e gols incríveis.</p>
+            <a href="#" class="btn btn-outline-primary btn-sm">Ler mais</a>
+          </div>
+        </div>
+      </div>
 
-<!-- Banner Fade + Slide Script -->
-<script>
-    const slides = document.querySelectorAll('.banner img');
-    let current = 0;
+      <div class="col-md-4">
+        <div class="card shadow-sm h-100">
+          <img src="https://source.unsplash.com/500x300/?volleyball" class="card-img-top" alt="Notícia 2">
+          <div class="card-body">
+            <h5 class="card-title fw-semibold">Time de Vôlei Feminino Invicto</h5>
+            <p class="card-text">As atletas do Sesc garantiram mais uma vitória e seguem firmes rumo ao título.</p>
+            <a href="#" class="btn btn-outline-primary btn-sm">Ler mais</a>
+          </div>
+        </div>
+      </div>
 
-    function nextSlide() {
-        slides[current].classList.remove('active');
-        current = (current + 1) % slides.length;
-        slides[current].classList.add('active');
-    }
+      <div class="col-md-4">
+        <div class="card shadow-sm h-100">
+          <img src="https://source.unsplash.com/500x300/?basketball" class="card-img-top" alt="Notícia 3">
+          <div class="card-body">
+            <h5 class="card-title fw-semibold">Basquete: Novos Talentos</h5>
+            <p class="card-text">Conheça os novos destaques da equipe sub-17 de basquete que vem surpreendendo.</p>
+            <a href="#" class="btn btn-outline-primary btn-sm">Ler mais</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 
-    setInterval(nextSlide, 4000); // Muda a cada 4 segundos
-</script>
+  <!-- Últimas Notícias -->
+  <section class="container mb-5">
+    <h3 class="fw-bold border-bottom pb-2 mb-4 text-sesc-blue">Últimas Notícias</h3>
+    <div class="row g-4">
+      <?php for ($i = 1; $i <= 6; $i++): ?>
+        <div class="col-md-4">
+          <div class="card border-0 shadow-sm h-100">
+            <img src="https://source.unsplash.com/500x300/?sports,<?= $i ?>" class="card-img-top" alt="Notícia <?= $i ?>">
+            <div class="card-body">
+              <h6 class="fw-bold">Notícia <?= $i ?> — Título de Exemplo</h6>
+              <p class="small text-muted mb-2">Publicado em <?= date('d/m/Y') ?></p>
+              <p class="card-text">Resumo breve da notícia <?= $i ?> sobre o mundo esportivo Sesc Esports.</p>
+              <a href="#" class="btn btn-sm btn-outline-secondary">Continuar lendo</a>
+            </div>
+          </div>
+        </div>
+      <?php endfor; ?>
+    </div>
+  </section>
 
-</body>
-</html>
+</main>
+
+<?php include(FOOTER_TEMPLATE); ?>
