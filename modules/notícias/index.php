@@ -1,7 +1,7 @@
 <?php
 require_once(__DIR__ . '/../../config.php');
 require_once(MODULES_PATH . '/notícias/functions.php');
-require_once(INC_PATH . '/header.php'); // Header global
+require_once(HEADER_TEMPLATE); // Header global
 
 $noticias = find_all_news();
 ?>
@@ -61,4 +61,4 @@ $noticias = find_all_news();
 
 <?php include(COMPONENTS_PATH . '/modal/deleteModal.php'); ?>
 <script src="<?= BASE_URL ?>/public/js/main.js"></script>
-<?php include(INC_PATH . '/footer.php'); ?>
+<?php require_once(FOOTER_TEMPLATE); ?>

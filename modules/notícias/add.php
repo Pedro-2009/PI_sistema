@@ -77,7 +77,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <option value="">Selecione</option>
                 <?php foreach ($categorias as $c): ?>
                     <option value="<?= $c['id']; ?>" <?= (($_POST['categoria_id'] ?? '') == $c['id']) ? 'selected' : ''; ?>>
-                        <?= htmlspecialchars($c['nome']); ?>
+                        <?= htmlspecialchars($c['nome_categoria']); ?>
                     </option>
                 <?php endforeach; ?>
             </select>
