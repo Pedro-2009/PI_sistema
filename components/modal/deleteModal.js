@@ -1,15 +1,21 @@
-document.addEventListener("DOMContentLoaded", () => {
-    const deleteModal = document.getElementById("deleteModal");
-    const deleteConfirmBtn = document.getElementById("deleteConfirmBtn");
+document.addEventListener("DOMContentLoaded", function () {
+    const deleteButtons = document.querySelectorAll(".delete-btn");
+    const titleSpan = document.getElementById("delete-title");
+    const confirmLink = document.getElementById("delete-confirm");
 
-    // Escutar qualquer botão que chamar o modal
-    document.querySelectorAll(".openDeleteModal").forEach(button => {
-        button.addEventListener("click", function () {
-            const url = this.getAttribute("data-url");
-            deleteConfirmBtn.setAttribute("href", url);
+    deleteButtons.forEach(btn => {
+        btn.addEventListener("click", () => {
+            const id = btn.getAttribute("data-id");
+            const titulo = btn.getAttribute("data-titulo");
 
-            // Abrir o modal
-            const modal = new bootstrap.Modal(deleteModal);
+            // Preencher título no modal
+            titleSpan.textContent = titulo;
+
+            // Definir link real do delete
+            confirmLink.href = `delete.php?id=${id}`;
+
+            // Abrir modal
+            const modal = new bootstrap.Modal(document.getElementById("deleteModal"));
             modal.show();
         });
     });

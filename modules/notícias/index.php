@@ -30,7 +30,7 @@ $noticias = find_all_news();
                     <tr>
                         <td><?= $n['id']; ?></td>
                         <td><?= htmlspecialchars($n['titulo']); ?></td>
-                        <td><?= htmlspecialchars($n['categoria_nome']); ?></td>
+                        <td><?= htmlspecialchars($n['nome_categoria']); ?></td>
                         <td>
                             <?php if (!empty($n['imagem'])): ?>
                                 <img src="<?= BASE_URL . '/' . $n['imagem']; ?>" alt="Imagem" width="60" class="rounded">
@@ -38,7 +38,7 @@ $noticias = find_all_news();
                                 <span class="text-muted">Sem imagem</span>
                             <?php endif; ?>
                         </td>
-                        <td><?= date('d/m/Y H:i', strtotime($n['criado_em'])); ?></td>
+                        <td><?= date('d/m/Y H:i', strtotime($n['data_publicacao'])); ?></td>
                         <td>
                             <a href="view.php?id=<?= $n['id']; ?>" class="btn btn-info btn-sm">
                                 <i class="bi bi-eye"></i>
@@ -46,9 +46,12 @@ $noticias = find_all_news();
                             <a href="edit.php?id=<?= $n['id']; ?>" class="btn btn-warning btn-sm">
                                 <i class="bi bi-pencil-square"></i>
                             </a>
-                            <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal" data-id="<?= $n['id']; ?>">
-                                <i class="bi bi-trash"></i>
+
+                            <button class="btn btn-danger btn-sm delete-btn" data-id="<?= $n['id']; ?>"
+                                data-titulo="<?= htmlspecialchars($n['titulo']); ?>">
+                                Deletar
                             </button>
+
                         </td>
                     </tr>
                 <?php endforeach; ?>
@@ -59,6 +62,8 @@ $noticias = find_all_news();
     <?php endif; ?>
 </div>
 
-<?php include(COMPONENTS_PATH . '/modal/deleteModal.php'); ?>
+
 <script src="<?= BASE_URL ?>/public/js/main.js"></script>
+<?php include(COMPONENTS_PATH . '/modal/deleteModal.php'); ?>
+
 <?php require_once(FOOTER_TEMPLATE); ?>

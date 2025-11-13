@@ -2,13 +2,13 @@
 require_once(__DIR__ . '/../config.php');
 if (session_status() === PHP_SESSION_NONE) session_start();
 
-// Exemplo de usuário logado (remover ou substituir pelo login real)
+// ⚠️ Apenas para teste: remove depois que o sistema de login estiver funcionando
 if (!isset($_SESSION['user'])) {
     $_SESSION['user'] = [
         'id' => 1,
-        'nome' => 'Pedro Henrique',
+        'nome_completo' => 'Pedro Henrique',
         'email' => 'pedro@example.com',
-        'nivel_acesso' => 'Admin'
+        'nivel_acesso' => 'admin'
     ];
 }
 ?>
@@ -25,6 +25,7 @@ if (!isset($_SESSION['user'])) {
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 
   <!-- CSS Global -->
+   <link rel="stylesheet" href="<?= BASE_URL ?>/public/css/noticiasStyles.css">
   <link rel="stylesheet" href="<?= BASE_URL ?>/public/css/headerStyles.css">
   <link rel="stylesheet" href="<?= BASE_URL ?>/public/css/footerStyles.css">
 </head>
@@ -55,7 +56,11 @@ if (!isset($_SESSION['user'])) {
           </a>
           <ul class="dropdown-menu dropdown-menu-end shadow">
             <li><a class="dropdown-item" href="<?= BASE_URL ?>/modules/notícias/index.php">Ver todas</a></li>
-            <li><a class="dropdown-item" href="<?= BASE_URL ?>/modules/notícias/add.php">Adicionar nova</a></li>
+            <li>
+              <?php if (!empty($_SESSION['user']) && in_array($_SESSION['user']['nivel_acesso'], ['escritor', 'admin'])): ?>
+                <a class="dropdown-item" href="<?= BASE_URL ?>/modules/notícias/add.php">Adicionar nova</a>
+              <?php endif; ?>
+            </li>
           </ul>
         </li>
 
@@ -68,14 +73,15 @@ if (!isset($_SESSION['user'])) {
         </li>
 
         <!-- Dropdown do perfil -->
+        <?php if (!empty($_SESSION['user'])): ?>
         <li class="nav-item dropdown ms-lg-2">
           <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             <i class="bi bi-person-circle fs-5 me-1 text-warning"></i>
-            <span><?= htmlspecialchars($_SESSION['user']['nome']); ?></span>
+            <span><?= htmlspecialchars($_SESSION['user']['nome_completo']); ?></span>
           </a>
           <ul class="dropdown-menu dropdown-menu-end shadow">
             <li class="dropdown-item-text">
-              <strong>Nome:</strong> <?= htmlspecialchars($_SESSION['user']['nome']); ?><br>
+              <strong>Nome:</strong> <?= htmlspecialchars($_SESSION['user']['nome_completo']); ?><br>
               <strong>Email:</strong> <?= htmlspecialchars($_SESSION['user']['email']); ?><br>
               <strong>Nível:</strong> <?= htmlspecialchars($_SESSION['user']['nivel_acesso']); ?>
             </li>
@@ -87,6 +93,7 @@ if (!isset($_SESSION['user'])) {
             </li>
           </ul>
         </li>
+        <?php endif; ?>
       </ul>
     </div>
   </div>

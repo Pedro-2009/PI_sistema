@@ -1,0 +1,28 @@
+/* 🧩 Padronização dos cards de notícia */
+.noticia-card {
+  height: 200px;
+  border: 1px solid #dee2e6;
+  border-radius: 10px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  background-color: #fff;
+}
+
+/* Ajuste da imagem dentro do card */
+.noticia-card img {
+  width: 100%;
+  height: 140px;
+  object-fit: cover;
+}
+
+/* Suaviza a sombra no hover */
+.noticia-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+}
+
+/* Garante espaçamento automático entre colunas */
+.row.g-4 {
+  row-gap: 1.5rem;
+  column-gap: 1.5rem;
+}

@@ -1,93 +1,75 @@
 <?php
-session_start();
 require_once(__DIR__ . '/../../config.php');
-require_once(INC_PATH . '/database.php');
 require_once(INC_PATH . '/globalFunctions.php');
-require_once(MODULES_PATH . '/categorias/functions.php');
-require_once(MODULES_PATH . '/notícias/functions.php');
+require_once(INC_PATH . '/database.php');
 
-// 🔒 Controle de acesso simples
-if (!isset($_SESSION['user']) || !in_array($_SESSION['user']['nivel_acesso'], ['admin', 'escritor'])) {
-    header('Location: ' . BASE_URL . '/login.php');
+if (session_status() === PHP_SESSION_NONE) session_start();
+
+$conn = open_database();
+if (!$conn) {
+    echo "<div class='alert alert-danger text-center'>Erro ao conectar ao banco.</div>";
     exit;
 }
 
-// 📌 Obter ID da notícia
-$id = $_GET['id'] ?? null;
-if (!$id) {
-    header('Location: ' . BASE_URL . '/modules/notícias/index.php');
+$id = isset($_GET['id']) ? intval($_GET['id']) : 0;
+if ($id <= 0) {
+    echo "<div class='container py-5 text-center'><div class='alert alert-danger'>ID inválido.</div></div>";
+    include(FOOTER_TEMPLATE);
     exit;
 }
 
-// 🔹 Buscar notícia existente
+require_once(__DIR__ . '/functions.php');
 $noticia = find_news_by_id($id);
+
 if (!$noticia) {
-    header('Location: ' . BASE_URL . '/modules/notícias/index.php');
+    echo "<div class='container py-5 text-center'><div class='alert alert-danger'>Notícia não encontrada.</div></div>";
+    include(FOOTER_TEMPLATE);
     exit;
-}
-
-// 🔹 Buscar categorias para select
-$categorias = find_all_categories();
-
-// 💾 Atualização da notícia
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $data = [
-        'titulo' => $_POST['titulo'] ?? '',
-        'conteudo' => $_POST['conteudo'] ?? '',
-        'categoria_id' => $_POST['categoria_id'] ?? null,
-    ];
-
-    $success = update_news($id, $data);
-
-    if ($success) {
-        $_SESSION['messages'][] = ['success', 'Notícia atualizada com sucesso!'];
-        header('Location: ' . BASE_URL . '/modules/notícias/index.php');
-        exit;
-    } else {
-        $_SESSION['messages'][] = ['danger', 'Erro ao atualizar a notícia.'];
-    }
 }
 
 include(HEADER_TEMPLATE);
 ?>
 
-<div class="container mt-5 pt-4">
-    <h1 class="mb-4">Editar Notícia</h1>
+<div class="container py-4">
+    <h2 class="mb-4">Editar Notícia</h2>
 
-    <?php
-    if (!empty($_SESSION['messages'])) {
-        foreach ($_SESSION['messages'] as $msg) {
-            echo "<div class='alert alert-{$msg[0]}'>" . htmlspecialchars($msg[1]) . "</div>";
-        }
-        unset($_SESSION['messages']);
-    }
-    ?>
+    <?php if (!empty($_SESSION['msg'])): ?>
+        <div class="alert alert-info"><?= htmlspecialchars($_SESSION['msg']); ?></div>
+        <?php unset($_SESSION['msg']); ?>
+    <?php endif; ?>
 
-    <form action="" method="POST">
+    <form action="edit.php?id=<?= $id ?>" method="POST" enctype="multipart/form-data">
+        <input type="hidden" name="id" value="<?= $id ?>">
+
         <div class="mb-3">
-            <label for="titulo" class="form-label">Título</label>
-            <input type="text" name="titulo" id="titulo" class="form-control" value="<?= htmlspecialchars($noticia['titulo']); ?>" required>
+            <label class="form-label">Título</label>
+            <input type="text" class="form-control" name="titulo" required
+                   value="<?= htmlspecialchars($noticia['titulo']); ?>">
         </div>
 
         <div class="mb-3">
-            <label for="categoria_id" class="form-label">Categoria</label>
-            <select name="categoria_id" id="categoria_id" class="form-select" required>
-                <option value="">Selecione uma categoria</option>
-                <?php foreach ($categorias as $cat): ?>
-                    <option value="<?= $cat['id']; ?>" <?= $cat['id'] == $noticia['categoria_id'] ? 'selected' : ''; ?>>
-                        <?= htmlspecialchars($cat['nome']); ?>
-                    </option>
-                <?php endforeach; ?>
-            </select>
+            <label class="form-label">Resumo</label>
+            <textarea class="form-control" name="resumo" required><?= htmlspecialchars($noticia['resumo']); ?></textarea>
         </div>
 
         <div class="mb-3">
-            <label for="conteudo" class="form-label">Conteúdo</label>
-            <textarea name="conteudo" id="conteudo" rows="8" class="form-control" required><?= htmlspecialchars($noticia['conteudo']); ?></textarea>
+            <label class="form-label">Conteúdo</label>
+            <textarea class="form-control" name="conteudo" required><?= htmlspecialchars($noticia['conteudo']); ?></textarea>
         </div>
 
-        <button type="submit" class="btn btn-warning">Atualizar</button>
-        <a href="<?= BASE_URL ?>/modules/notícias/index.php" class="btn btn-secondary ms-2">Cancelar</a>
+        <div class="mb-3">
+            <label class="form-label">Imagem Atual</label><br>
+            <img src="<?= BASE_URL ?>/public/uploads/noticias/<?= htmlspecialchars($noticia['imagem_principal']); ?>"
+                 width="180" class="rounded">
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Nova Imagem (opcional)</label>
+            <input type="file" name="imagem_principal" class="form-control">
+        </div>
+
+        <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+        <a href="index.php" class="btn btn-secondary">Cancelar</a>
     </form>
 </div>
 
