@@ -60,11 +60,31 @@ function update_user($id, $data) {
     $conn = open_database();
     if (!$conn) return false;
 
-    $sql = "UPDATE usuarios SET nome = ?, email = ?, nivel_acesso = ? WHERE id = ?";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("sssi", $data['nome'], $data['email'], $data['nivel_acesso'], $id);
+    // Garante que todos os campos necessários existam
+    $nome = isset($data['nome']) ? $data['nome'] : '';
+    $email = isset($data['email']) ? $data['email'] : '';
+    $nivel = isset($data['nivel_acesso']) ? $data['nivel_acesso'] : '';
+    $senha = isset($data['senha']) ? trim($data['senha']) : '';
+
+    // Se o campo senha foi preenchido, também atualiza a senha
+    if (!empty($senha)) {
+        $senha_hash = password_hash($senha, PASSWORD_DEFAULT);
+        $sql = "UPDATE usuarios SET nome = ?, email = ?, nivel_acesso = ?, senha = ? WHERE id = ?";
+        $stmt = $conn->prepare($sql);
+        if (!$stmt) return false;
+
+        $stmt->bind_param("ssssi", $nome, $email, $nivel, $senha_hash, $id);
+    } else {
+        // Atualização sem alterar senha
+        $sql = "UPDATE usuarios SET nome = ?, email = ?, nivel_acesso = ? WHERE id = ?";
+        $stmt = $conn->prepare($sql);
+        if (!$stmt) return false;
+
+        $stmt->bind_param("sssi", $nome, $email, $nivel, $id);
+    }
 
     $success = $stmt->execute();
+
     $stmt->close();
     close_database($conn);
     return $success;

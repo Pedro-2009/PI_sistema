@@ -1,29 +1,90 @@
-/* === Estilo padrão do Sesc Esports === */
-.sesc-navbar {
-  background-color: #0056b3 !important; /* Azul escuro */
+/* =========================
+   Header Global - Sesc Esports
+   ========================= */
+
+/* Fundo da navbar */
+.custom-navbar {
+    background-color: #0056A3;
+    transition: background-color 0.3s ease;
 }
 
-.sesc-navbar .nav-link {
-  color: white !important;
-  font-weight: 500;
-  transition: 0.3s;
+/* Link padrão da navbar */
+.custom-navbar .nav-link {
+    color: #fff;
+    font-weight: 500;
+    transition: color 0.2s ease;
 }
 
-.sesc-navbar .nav-link:hover,
-.sesc-navbar .nav-link.active {
-  color: #ffcc00 !important; /* Amarelo destaque */
+.custom-navbar .nav-link:hover,
+.custom-navbar .nav-link:focus {
+    color: #FFD700; /* Amarelo Sesc */
 }
 
-.dropdown-menu {
-  background-color: #0056b3;
-  border: none;
+/* Dropdown */
+.navbar .dropdown-menu {
+    background-color: #0056A3;
+    border: none;
+    min-width: 200px;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    display: block; /* necessário para animação CSS */
+    visibility: hidden;
+    pointer-events: none;
 }
 
-.dropdown-item {
-  color: #fff !important;
+.navbar .dropdown:hover > .dropdown-menu,
+.navbar .dropdown-menu.show {
+    opacity: 1;
+    transform: translateY(0);
+    visibility: visible;
+    pointer-events: auto;
 }
 
-.dropdown-item:hover {
-  background-color: #ffcc00 !important;
-  color: #003366 !important;
+.navbar .dropdown-menu .dropdown-item {
+    color: #fff;
+    font-weight: 500;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.navbar .dropdown-menu .dropdown-item:hover,
+.navbar .dropdown-menu .dropdown-item:focus {
+    background-color: #003f7f;
+    color: #FFD700;
+}
+
+.navbar .dropdown-menu .dropdown-item-text {
+    color: #fff;
+    padding: 8px 16px;
+}
+
+/* Divider dentro do dropdown */
+.navbar .dropdown-divider {
+    border-top: 1px solid #003f7f;
+}
+
+/* Ícone do troféu animado */
+.animate-trophy {
+    animation: bounce 1.5s infinite;
+}
+
+/* Animação bounce para o troféu */
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+}
+
+/* Botão do dropdown de perfil */
+.navbar .dropdown-toggle::after {
+    margin-left: 0.25rem;
+}
+
+/* Responsividade */
+@media (max-width: 992px) {
+    .custom-navbar .navbar-nav {
+        text-align: center;
+    }
+    .custom-navbar .nav-item {
+        margin-bottom: 0.5rem;
+    }
 }

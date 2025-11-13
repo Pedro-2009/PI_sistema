@@ -18,11 +18,8 @@ define('PUBLIC_PATH', ROOT_PATH . '/public');
 // ==========================
 // 🌐 CONFIGURAÇÃO DE URL BASE
 // ==========================
-// ➤ Se o projeto está em "htdocs/sesc_esports/", deixe assim:
-define('BASE_URL', '/sesc_esports');
 
-// ➤ Se estiver direto em "htdocs/", troque para:
-// define('BASE_URL', '/');
+define('BASE_URL', '/PI_sistema-1');
 
 // ==========================
 // 🧩 TEMPLATES GLOBAIS

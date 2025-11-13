@@ -1,106 +1,94 @@
 <?php
-require_once('../../init.php');
+require_once(__DIR__ . '/../../config.php');
+require_once(INC_PATH . '/database.php');
 
-// Verifica permissão rapidamente
-function requireRole($roles = [])
-{
-    if (!isset($_SESSION['user']) || !in_array($_SESSION['user']['nivel'], $roles)) {
-        header("Location: ../../index.php");
-        exit;
-    }
-}
+/**
+ * Retorna todas as categorias ordenadas pelo id decrescente
+ */
+function find_all_categories() {
+    $conn = open_database();
+    if (!$conn) return [];
 
-// Buscar todas categorias
-function getAllCategorias()
-{
-    global $mysqli;
-    $sql = "SELECT * FROM categorias ORDER BY nome_categoria ASC";
-    return $mysqli->query($sql)->fetch_all(MYSQLI_ASSOC);
-}
+    $sql = "SELECT * FROM categorias ORDER BY id DESC";
+    $result = $conn->query($sql);
 
-// Buscar categoria única
-function getCategoria($id)
-{
-    global $mysqli;
-    $id = intval($id);
-    return $mysqli->query("SELECT * FROM categorias WHERE id = $id LIMIT 1")->fetch_assoc();
-}
-
-// Criar categoria
-function addCategoria()
-{
-    requireRole(['admin', 'funcionario']);
-    global $mysqli;
-
-    $nome = mysqli_real_escape_string($mysqli, $_POST['nome_categoria']);
-
-    // evita duplicado
-    $exists = $mysqli->query("SELECT id FROM categorias WHERE nome_categoria = '$nome'");
-    if ($exists->num_rows > 0) {
-        $_SESSION['msg'] = "Essa categoria já existe!";
-        $_SESSION['type'] = "danger";
-        return;
+    $data = [];
+    if ($result && $result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            $data[] = $row;
+        }
     }
 
-    if ($mysqli->query("INSERT INTO categorias (nome_categoria) VALUES ('$nome')")) {
-        $_SESSION['msg'] = "Categoria cadastrada!";
-        $_SESSION['type'] = "success";
-    } else {
-        $_SESSION['msg'] = "Erro ao cadastrar!";
-        $_SESSION['type'] = "danger";
-    }
-
-    header("Location: index.php");
-    exit;
+    close_database($conn);
+    return $data;
 }
 
-// Atualizar categoria
-function updateCategoria($id)
-{
-    requireRole(['admin', 'funcionario']);
-    global $mysqli;
+/**
+ * Retorna uma categoria pelo ID
+ */
+function find_category_by_id($id) {
+    $conn = open_database();
+    if (!$conn) return null;
 
-    $nome = mysqli_real_escape_string($mysqli, $_POST['nome_categoria']);
+    $stmt = $conn->prepare("SELECT * FROM categorias WHERE id = ?");
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $category = $result->fetch_assoc();
 
-    $sql = "UPDATE categorias SET nome_categoria = '$nome' WHERE id = $id";
-
-    if ($mysqli->query($sql)) {
-        $_SESSION['msg'] = "Categoria atualizada!";
-        $_SESSION['type'] = "success";
-    } else {
-        $_SESSION['msg'] = "Erro ao editar!";
-        $_SESSION['type'] = "danger";
-    }
-
-    header("Location: index.php");
-    exit;
+    $stmt->close();
+    close_database($conn);
+    return $category ?: null;
 }
 
-// Excluir categoria
-function deleteCategoria($id)
-{
-    requireRole(['admin', 'funcionario']);
-    global $mysqli;
+/**
+ * Adiciona uma nova categoria
+ */
+function add_category($data) {
+    $conn = open_database();
+    if (!$conn) return false;
 
-    $id = intval($id);
+    $stmt = $conn->prepare("INSERT INTO categorias (nome, criado_em) VALUES (?, NOW())");
+    $stmt->bind_param("s", $data['nome']);
 
-    // impede excluir categorias usadas em notícias
-    $check = $mysqli->query("SELECT id FROM noticias WHERE categoria_id = $id LIMIT 1");
-    if ($check->num_rows > 0) {
-        $_SESSION['msg'] = "Essa categoria está sendo usada em notícias!";
-        $_SESSION['type'] = "danger";
-        header("Location: index.php");
-        exit;
-    }
+    $success = $stmt->execute();
 
-    if ($mysqli->query("DELETE FROM categorias WHERE id = $id")) {
-        $_SESSION['msg'] = "Categoria excluída!";
-        $_SESSION['type'] = "success";
-    } else {
-        $_SESSION['msg'] = "Erro ao excluir!";
-        $_SESSION['type'] = "danger";
-    }
-
-    header("Location: index.php");
-    exit;
+    $stmt->close();
+    close_database($conn);
+    return $success;
 }
+
+/**
+ * Atualiza uma categoria existente
+ */
+function update_category($id, $data) {
+    $conn = open_database();
+    if (!$conn) return false;
+
+    $stmt = $conn->prepare("UPDATE categorias SET nome = ? WHERE id = ?");
+    $stmt->bind_param("si", $data['nome'], $id);
+
+    $success = $stmt->execute();
+
+    $stmt->close();
+    close_database($conn);
+    return $success;
+}
+
+/**
+ * Deleta uma categoria
+ */
+function delete_category($id) {
+    $conn = open_database();
+    if (!$conn) return false;
+
+    $stmt = $conn->prepare("DELETE FROM categorias WHERE id = ?");
+    $stmt->bind_param("i", $id);
+
+    $success = $stmt->execute();
+
+    $stmt->close();
+    close_database($conn);
+    return $success;
+}
+?>

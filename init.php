@@ -48,3 +48,18 @@ if (!defined('FOOTER_TEMPLATE')) {
 // ✅ Sistema inicializado com sucesso
 // =========================================
 // echo "<!-- Sistema inicializado com sucesso (Sesc Esports) -->";
+
+
+define('SITE_NAME', 'Sesc Games News');
+define('BASEURL', '/'); // ajuste se precisar
+
+// Usuário fixo (só pra exemplo)
+$USER_EMAIL = 'admin@sesc.com';
+$USER_PASS  = '123';
+
+// Função de login
+function check_login($email, $pass)
+{
+    global $USER_EMAIL, $USER_PASS;
+    return ($email === $USER_EMAIL && $pass === $USER_PASS);
+}

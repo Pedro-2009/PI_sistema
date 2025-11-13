@@ -1,93 +1,64 @@
 <?php
-require_once('../../init.php');
-require_once('functions.php');
-session_start();
+require_once(__DIR__ . '/../../config.php');
+require_once(MODULES_PATH . '/notícias/functions.php');
+require_once(INC_PATH . '/header.php'); // Header global
 
-// Verifica login
-if (!isset($_SESSION['user'])) {
-    header('Location: ../../login.php');
-    exit;
-}
-
-// Busca todas as notícias
-$noticias = getAllNoticias();
+$noticias = find_all_news();
 ?>
 
-<?php include(HEADER_TEMPLATE); ?>
+<div class="container py-4">
+    <h1 class="mb-4">Gerenciar Notícias</h1>
 
-<div class="container mt-4">
+    <a href="add.php" class="btn btn-success mb-3">
+        <i class="bi bi-plus-circle me-1"></i> Adicionar Nova
+    </a>
 
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2 class="text-primary">Notícias do Sesc Esports</h2>
-
-        <?php if (in_array($_SESSION['user']['nivel'], ['admin', 'funcionario', 'escritor'])): ?>
-            <a href="add.php" class="btn btn-warning text-dark fw-bold">
-                + Nova Notícia
-            </a>
-        <?php endif; ?>
-    </div>
-
-    <div class="card shadow-sm">
-        <div class="card-body">
-
-            <?php if (empty($noticias)): ?>
-                <p class="text-muted">Nenhuma notícia cadastrada até o momento.</p>
-
-            <?php else: ?>
-                <table class="table table-striped align-middle">
-                    <thead class="table-primary">
-                        <tr>
-                            <th>ID</th>
-                            <th>Título</th>
-                            <th>Esporte</th>
-                            <th>Data/Hora</th>
-                            <th class="text-end">Ações</th>
-                        </tr>
-                    </thead>
-
-                    <tbody>
-                        <?php foreach ($noticias as $noticia): ?>
-                        <tr>
-                            <td><?php echo $noticia['id']; ?></td>
-                            <td><?php echo htmlspecialchars($noticia['titulo']); ?></td>
-                            <td><?php echo $noticia['esporte']; ?></td>
-                            <td><?php echo date('d/m/Y H:i', strtotime($noticia['data_criacao'])); ?></td>
-
-                            <td class="text-end">
-
-                                <a href="view.php?id=<?php echo $noticia['id']; ?>" 
-                                   class="btn btn-sm btn-primary">
-                                   Ver
-                                </a>
-
-                                <?php if (in_array($_SESSION['user']['nivel'], ['admin', 'funcionario', 'escritor'])): ?>
-                                    <a href="edit.php?id=<?php echo $noticia['id']; ?>" 
-                                       class="btn btn-sm btn-warning text-dark">
-                                       Editar
-                                    </a>
-                                <?php endif; ?>
-
-                                <?php if (in_array($_SESSION['user']['nivel'], ['admin', 'funcionario'])): ?>
-                                    <button 
-                                        class="btn btn-sm btn-danger openDeleteModal"
-                                        data-url="delete.php?id=<?php echo $noticia['id']; ?>">
-                                        Excluir
-                                    </button>
-                                <?php endif; ?>
-
-                            </td>
-                        </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
-            <?php endif; ?>
-
-        </div>
-    </div>
-
+    <?php if (!empty($noticias)): ?>
+        <table class="table table-striped table-hover align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th>#</th>
+                    <th>Título</th>
+                    <th>Categoria</th>
+                    <th>Imagem</th>
+                    <th>Criado Em</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($noticias as $n): ?>
+                    <tr>
+                        <td><?= $n['id']; ?></td>
+                        <td><?= htmlspecialchars($n['titulo']); ?></td>
+                        <td><?= htmlspecialchars($n['categoria_nome']); ?></td>
+                        <td>
+                            <?php if (!empty($n['imagem'])): ?>
+                                <img src="<?= BASE_URL . '/' . $n['imagem']; ?>" alt="Imagem" width="60" class="rounded">
+                            <?php else: ?>
+                                <span class="text-muted">Sem imagem</span>
+                            <?php endif; ?>
+                        </td>
+                        <td><?= date('d/m/Y H:i', strtotime($n['criado_em'])); ?></td>
+                        <td>
+                            <a href="view.php?id=<?= $n['id']; ?>" class="btn btn-info btn-sm">
+                                <i class="bi bi-eye"></i>
+                            </a>
+                            <a href="edit.php?id=<?= $n['id']; ?>" class="btn btn-warning btn-sm">
+                                <i class="bi bi-pencil-square"></i>
+                            </a>
+                            <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal" data-id="<?= $n['id']; ?>">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    <?php else: ?>
+        <div class="alert alert-info">Nenhuma notícia encontrada.</div>
+    <?php endif; ?>
 </div>
 
-<?php include('../../components/modal/deleteModal.php'); ?>
-<script src="../../components/modal/deleteModal.js"></script>
-
-<?php include(FOOTER_TEMPLATE); ?>
+<?php include(COMPONENTS_PATH . '/modal/deleteModal.php'); ?>
+<script src="<?= BASE_URL ?>/public/js/main.js"></script>
+<?php include(INC_PATH . '/footer.php'); ?>
