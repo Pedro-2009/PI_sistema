@@ -1,21 +1,21 @@
-document.addEventListener("DOMContentLoaded", function () {
-    const deleteButtons = document.querySelectorAll(".delete-btn");
-    const titleSpan = document.getElementById("delete-title");
-    const confirmLink = document.getElementById("delete-confirm");
+document.addEventListener('DOMContentLoaded', function () {
+    const deleteButtons = document.querySelectorAll('.delete-btn');
+    const deleteModal = document.getElementById('deleteModal');
+    const deleteMessage = document.getElementById('deleteModalMessage');
+    const confirmBtn = document.getElementById('confirmDeleteBtn');
+
+    if (!deleteModal) return;
 
     deleteButtons.forEach(btn => {
-        btn.addEventListener("click", () => {
-            const id = btn.getAttribute("data-id");
-            const titulo = btn.getAttribute("data-titulo");
+        btn.addEventListener('click', () => {
+            const id = btn.getAttribute('data-id');
+            const title = btn.getAttribute('data-title');
 
-            // Preencher título no modal
-            titleSpan.textContent = titulo;
+            deleteMessage.textContent = `Deseja realmente excluir "${title}"?`;
 
-            // Definir link real do delete
-            confirmLink.href = `delete.php?id=${id}`;
+            confirmBtn.href = `delete.php?id=${id}`;
 
-            // Abrir modal
-            const modal = new bootstrap.Modal(document.getElementById("deleteModal"));
+            const modal = new bootstrap.Modal(deleteModal);
             modal.show();
         });
     });

@@ -1,51 +1,48 @@
 <?php
 require_once(__DIR__ . '/../../config.php');
-require_once(INC_PATH . '/globalFunctions.php');
+require_once(INC_PATH . '/database.php');
 require_once(__DIR__ . '/functions.php');
 
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-
-include(HEADER_TEMPLATE);
-
-$message = '';
-$alertType = '';
-
+// Processa o formulário
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $nome = trim($_POST['nome'] ?? '');
 
-    if ($nome === '') {
-        $message = 'O nome da categoria é obrigatório.';
-        $alertType = 'danger';
-    } else {
-        $success = add_category(['nome' => $nome]);
-        if ($success) {
-            $message = 'Categoria adicionada com sucesso!';
-            $alertType = 'success';
+    // OBRIGATÓRIO: nome_categoria vindo do input
+    $data = [
+        'nome_categoria' => trim($_POST['nome_categoria'] ?? '')
+    ];
+
+    if (!empty($data['nome_categoria'])) {
+        if (add_category($data)) {
+            header("Location: index.php?success=1");
+            exit;
         } else {
-            $message = 'Erro ao adicionar a categoria.';
-            $alertType = 'danger';
+            $errorMessage = "Erro ao cadastrar categoria!";
         }
+    } else {
+        $errorMessage = "O campo nome da categoria não pode ficar vazio!";
     }
 }
 ?>
 
-<div class="container mt-5 pt-4">
-    <h1 class="h3 mb-4">Adicionar Categoria</h1>
+<?php include(HEADER_TEMPLATE); ?>
 
-    <?php if ($message): ?>
-        <div class="alert alert-<?= $alertType; ?>"><?= htmlspecialchars($message); ?></div>
+<div class="container py-4">
+    <h1 class="mb-4">Adicionar Categoria</h1>
+
+    <?php if (!empty($errorMessage)) : ?>
+        <div class="alert alert-danger"><?= htmlspecialchars($errorMessage) ?></div>
     <?php endif; ?>
 
-    <form method="POST" class="w-50">
+    <form method="POST">
         <div class="mb-3">
-            <label for="nome" class="form-label">Nome da Categoria</label>
-            <input type="text" id="nome" name="nome" class="form-control" required>
+            <label for="nome_categoria" class="form-label">Nome da Categoria</label>
+            <input type="text" class="form-control" id="nome_categoria" name="nome_categoria" required>
         </div>
-        <button type="submit" class="btn btn-primary">Adicionar</button>
-        <a href="index.php" class="btn btn-secondary ms-2">Cancelar</a>
+
+        <button type="submit" class="btn btn-primary">Salvar</button>
+        <a href="index.php" class="btn btn-secondary">Cancelar</a>
     </form>
+
 </div>
 
 <?php include(FOOTER_TEMPLATE); ?>

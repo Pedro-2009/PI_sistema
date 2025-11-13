@@ -47,9 +47,9 @@ $noticias = find_all_news();
                                 <i class="bi bi-pencil-square"></i>
                             </a>
 
-                            <button class="btn btn-danger btn-sm delete-btn" data-id="<?= $n['id']; ?>"
-                                data-titulo="<?= htmlspecialchars($n['titulo']); ?>">
-                                Deletar
+                            <button class="btn btn-danger btn-sm delete-btn" data-id="<?= $noticia['id'] ?>"
+                                data-title="<?= htmlspecialchars($noticia['titulo']) ?>">
+                                Excluir
                             </button>
 
                         </td>
@@ -64,6 +64,8 @@ $noticias = find_all_news();
 
 
 <script src="<?= BASE_URL ?>/public/js/main.js"></script>
-<?php include(COMPONENTS_PATH . '/modal/deleteModal.php'); ?>
+<?php include COMPONENTS_PATH . '/modal/deleteModal.php'; ?>
+
+
 
 <?php require_once(FOOTER_TEMPLATE); ?>

@@ -9,7 +9,7 @@ function find_all_categories() {
     $conn = open_database();
     if (!$conn) return [];
 
-    $sql = "SELECT * FROM categorias ORDER BY id DESC";
+    $sql = "SELECT id, nome_categoria FROM categorias ORDER BY id DESC";
     $result = $conn->query($sql);
 
     $data = [];
@@ -30,14 +30,16 @@ function find_category_by_id($id) {
     $conn = open_database();
     if (!$conn) return null;
 
-    $stmt = $conn->prepare("SELECT * FROM categorias WHERE id = ?");
+    $stmt = $conn->prepare("SELECT id, nome_categoria FROM categorias WHERE id = ?");
     $stmt->bind_param("i", $id);
     $stmt->execute();
+
     $result = $stmt->get_result();
     $category = $result->fetch_assoc();
 
     $stmt->close();
     close_database($conn);
+
     return $category ?: null;
 }
 
@@ -48,8 +50,9 @@ function add_category($data) {
     $conn = open_database();
     if (!$conn) return false;
 
-    $stmt = $conn->prepare("INSERT INTO categorias (nome, criado_em) VALUES (?, NOW())");
-    $stmt->bind_param("s", $data['nome']);
+    // agora usa nome_categoria
+    $stmt = $conn->prepare("INSERT INTO categorias (nome_categoria) VALUES (?)");
+    $stmt->bind_param("s", $data['nome_categoria']);
 
     $success = $stmt->execute();
 
@@ -65,8 +68,9 @@ function update_category($id, $data) {
     $conn = open_database();
     if (!$conn) return false;
 
-    $stmt = $conn->prepare("UPDATE categorias SET nome = ? WHERE id = ?");
-    $stmt->bind_param("si", $data['nome'], $id);
+    // agora usa nome_categoria (e não nome)
+    $stmt = $conn->prepare("UPDATE categorias SET nome_categoria = ? WHERE id = ?");
+    $stmt->bind_param("si", $data['nome_categoria'], $id);
 
     $success = $stmt->execute();
 
