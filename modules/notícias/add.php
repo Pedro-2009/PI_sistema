@@ -4,43 +4,65 @@ require_once(MODULES_PATH . '/notícias/functions.php');
 require_once(MODULES_PATH . '/categorias/functions.php');
 require_once(INC_PATH . '/header.php');
 
-// Lista categorias e prepara variáveis
+if (session_status() === PHP_SESSION_NONE) session_start();
+
+// Impede cadastro sem estar logado
+if (!isset($_SESSION['user']['id'])) {
+    die("<div class='alert alert-danger text-center mt-4'>Você precisa estar logado para publicar notícias.</div>");
+}
+
+$autor_id = intval($_SESSION['user']['id']);
 $categorias = find_all_categories();
+
 $errors = [];
 $success = false;
 
-// Processa formulário
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+    // --- Dados do formulário ---
     $titulo = trim($_POST['titulo'] ?? '');
     $resumo = trim($_POST['resumo'] ?? '');
     $conteudo = trim($_POST['conteudo'] ?? '');
-    $categoria_id = $_POST['categoria_id'] ?? '';
+    $categoria_id = intval($_POST['categoria_id'] ?? 0);
     $status = $_POST['status'] ?? 'ativo';
-    $autor_id = $_SESSION['user']['id'] ?? 1; // padrão, caso não logado
-    $imagem = $_FILES['imagem_principal'] ?? null;
 
-    // Validação
+    // Validações
     if (empty($titulo)) $errors[] = "O título é obrigatório.";
     if (empty($resumo)) $errors[] = "O resumo é obrigatório.";
     if (empty($conteudo)) $errors[] = "O conteúdo é obrigatório.";
-    if (empty($categoria_id)) $errors[] = "Selecione uma categoria.";
+    if ($categoria_id <= 0) $errors[] = "Selecione uma categoria válida.";
 
-    // Upload da imagem principal
-    $imagemPath = '';
-    if ($imagem && $imagem['error'] === 0) {
-        $ext = strtolower(pathinfo($imagem['name'], PATHINFO_EXTENSION));
+    // Verifica se a categoria realmente existe
+    $categoriaExiste = false;
+    foreach ($categorias as $c) {
+        if ($c['id'] == $categoria_id) {
+            $categoriaExiste = true;
+            break;
+        }
+    }
+    if (!$categoriaExiste) {
+        $errors[] = "Categoria selecionada não existe.";
+    }
+
+    // --- Upload da imagem principal ---
+    $imagemPath = null;
+
+    if (!empty($_FILES['imagem_principal']) && $_FILES['imagem_principal']['error'] === 0) {
+        $ext = strtolower(pathinfo($_FILES['imagem_principal']['name'], PATHINFO_EXTENSION));
         $nomeArquivo = 'noticia_' . time() . '.' . $ext;
+
         $destino = PUBLIC_PATH . '/uploads/noticias/' . $nomeArquivo;
 
-        if (move_uploaded_file($imagem['tmp_name'], $destino)) {
+        if (move_uploaded_file($_FILES['imagem_principal']['tmp_name'], $destino)) {
             $imagemPath = 'public/uploads/noticias/' . $nomeArquivo;
         } else {
             $errors[] = "Falha ao enviar a imagem.";
         }
     }
 
-    // Se tudo ok → salva no banco
+    // --- Se tudo OK, insere ---
     if (empty($errors)) {
+
         $success = add_news([
             'titulo' => $titulo,
             'resumo' => $resumo,
@@ -52,7 +74,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         ]);
 
         if ($success) {
-            header('Location: index.php');
+            header("Location: index.php");
             exit;
         } else {
             $errors[] = "Erro ao salvar a notícia no banco de dados.";
@@ -67,7 +89,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <i class="bi bi-plus-circle me-2"></i>Adicionar Nova Notícia
     </h2>
 
-    <?php if ($errors): ?>
+    <?php if (!empty($errors)): ?>
       <div class="alert alert-danger">
         <ul class="mb-0">
           <?php foreach ($errors as $e): ?>
@@ -78,6 +100,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <?php endif; ?>
 
     <form method="post" enctype="multipart/form-data">
+
       <div class="mb-3">
         <label class="form-label fw-semibold">Título</label>
         <input type="text" name="titulo" class="form-control border-2"
@@ -87,13 +110,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <div class="mb-3">
         <label class="form-label fw-semibold">Resumo</label>
         <textarea name="resumo" class="form-control border-2" rows="2"
-                  placeholder="Resumo curto da notícia..." required><?= htmlspecialchars($_POST['resumo'] ?? '') ?></textarea>
+                  required><?= htmlspecialchars($_POST['resumo'] ?? '') ?></textarea>
       </div>
 
       <div class="mb-3">
         <label class="form-label fw-semibold">Conteúdo</label>
         <textarea name="conteudo" class="form-control border-2" rows="6"
-                  placeholder="Escreva o conteúdo completo aqui..." required><?= htmlspecialchars($_POST['conteudo'] ?? '') ?></textarea>
+                  required><?= htmlspecialchars($_POST['conteudo'] ?? '') ?></textarea>
       </div>
 
       <div class="row">
@@ -102,7 +125,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           <select name="categoria_id" class="form-select border-2" required>
             <option value="">Selecione...</option>
             <?php foreach ($categorias as $c): ?>
-              <option value="<?= $c['id']; ?>" <?= (($_POST['categoria_id'] ?? '') == $c['id']) ? 'selected' : ''; ?>>
+              <option value="<?= $c['id']; ?>"
+                <?= (($_POST['categoria_id'] ?? '') == $c['id']) ? 'selected' : ''; ?>>
                 <?= htmlspecialchars($c['nome_categoria']); ?>
               </option>
             <?php endforeach; ?>
@@ -112,8 +136,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="col-md-6 mb-3">
           <label class="form-label fw-semibold">Status</label>
           <select name="status" class="form-select border-2">
-            <option value="ativo" <?= (($_POST['status'] ?? '') === 'ativo') ? 'selected' : ''; ?>>Ativo</option>
-            <option value="rascunho" <?= (($_POST['status'] ?? '') === 'rascunho') ? 'selected' : ''; ?>>Rascunho</option>
+            <option value="ativo">Ativo</option>
+            <option value="rascunho">Rascunho</option>
           </select>
         </div>
       </div>

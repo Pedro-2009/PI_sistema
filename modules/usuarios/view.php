@@ -31,7 +31,7 @@ if (!$user) {
 
     <div class="mb-3">
       <label class="form-label fw-semibold text-secondary">Nome completo:</label>
-      <p class="form-control bg-light border-2"><?= htmlspecialchars($user['nome']) ?></p>
+      <p class="form-control bg-light border-2"><?= htmlspecialchars($user['nome_completo']) ?></p>
     </div>
 
     <div class="mb-3">
@@ -46,7 +46,7 @@ if (!$user) {
 
     <div class="mb-3">
       <label class="form-label fw-semibold text-secondary">Data de criação:</label>
-      <p class="form-control bg-light border-2"><?= date('d/m/Y H:i', strtotime($user['data_criacao'])) ?></p>
+      <p class="form-control bg-light border-2"><?= date('d/m/Y H:i', strtotime($user['data_registro'])) ?></p>
     </div>
 
     <div class="text-center mt-4 d-flex justify-content-between">

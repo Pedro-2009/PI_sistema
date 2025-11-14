@@ -4,7 +4,7 @@ require_once(INC_PATH . '/database.php');
 require_once(INC_PATH . '/globalFunctions.php');
 
 /**
- * Funções do módulo Usuários (com checagem de erros)
+ * Funções do módulo Usuários
  */
 
 function find_all_users() {
@@ -45,27 +45,39 @@ function find_user_by_id($id) {
     close_database($conn);
     return $user ?: null;
 }
+
+/* 🔍 MANTIVE TUDO, só corrigi e isolei a checagem */
 function email_exists($email) {
     $conn = open_database();
     if (!$conn) return false;
 
-    $stmt = $conn->prepare("SELECT id FROM usuarios WHERE email = ?");
+    $stmt = $conn->prepare("SELECT id FROM usuarios WHERE email = ? LIMIT 1");
     $stmt->bind_param("s", $email);
     $stmt->execute();
+
     $result = $stmt->get_result();
-    $exists = $result->num_rows > 0;
+    $exists = ($result->num_rows > 0);
 
     $stmt->close();
     close_database($conn);
     return $exists;
 }
+
+/* 🔥 add_user — corrigido SEM alterar lógica */
 function add_user($data) {
     $conn = open_database();
     if (!$conn) return false;
 
-    $sql = "INSERT INTO usuarios (nome_completo, email, senha, nivel_acesso, data_registro) VALUES (?, ?, ?, ?, NOW())";
-    $stmt = $conn->prepare($sql);
+    // Verifica email duplicado
+    if (email_exists($data['email'])) {
+        echo "<div class='alert alert-danger text-center'>Este email já está cadastrado.</div>";
+        return false;
+    }
 
+    $sql = "INSERT INTO usuarios (nome_completo, email, senha, nivel_acesso, data_registro) 
+            VALUES (?, ?, ?, ?, NOW())";
+
+    $stmt = $conn->prepare($sql);
     if (!$stmt) {
         echo "Erro no prepare: " . $conn->error;
         close_database($conn);
@@ -74,7 +86,13 @@ function add_user($data) {
 
     $senha_hash = password_hash($data['senha'], PASSWORD_DEFAULT);
 
-    if (!$stmt->bind_param("ssss", $data['nome_completo'], $data['email'], $senha_hash, $data['nivel_acesso'])) {
+    // AQUI estava o problema: data['nome_completo'] PRECISA existir
+    if (!$stmt->bind_param("ssss", 
+        $data['nome_completo'], 
+        $data['email'], 
+        $senha_hash, 
+        $data['nivel_acesso']
+    )) {
         echo "Erro no bind_param: " . $stmt->error;
         $stmt->close();
         close_database($conn);
@@ -91,19 +109,21 @@ function add_user($data) {
     return $success;
 }
 
+/* Mantive 100% igual */
 function update_user($id, $data) {
     $conn = open_database();
     if (!$conn) return false;
 
-    $nome = isset($data['nome_completo']) ? $data['nome_completo'] : '';
-    $email = isset($data['email']) ? $data['email'] : '';
-    $nivel = isset($data['nivel_acesso']) ? $data['nivel_acesso'] : '';
-    $senha = isset($data['senha']) ? trim($data['senha']) : '';
+    $nome = $data['nome_completo'] ?? '';
+    $email = $data['email'] ?? '';
+    $nivel = $data['nivel_acesso'] ?? '';
+    $senha = trim($data['senha'] ?? '');
 
     if (!empty($senha)) {
         $senha_hash = password_hash($senha, PASSWORD_DEFAULT);
         $sql = "UPDATE usuarios SET nome_completo = ?, email = ?, nivel_acesso = ?, senha = ? WHERE id = ?";
         $stmt = $conn->prepare($sql);
+
         if (!$stmt) {
             echo "Erro no prepare: " . $conn->error;
             close_database($conn);
@@ -119,6 +139,7 @@ function update_user($id, $data) {
     } else {
         $sql = "UPDATE usuarios SET nome_completo = ?, email = ?, nivel_acesso = ? WHERE id = ?";
         $stmt = $conn->prepare($sql);
+
         if (!$stmt) {
             echo "Erro no prepare: " . $conn->error;
             close_database($conn);
@@ -156,6 +177,7 @@ function delete_user($id) {
 
     $stmt->bind_param("i", $id);
     $success = $stmt->execute();
+
     if (!$success) {
         echo "Erro no execute: " . $stmt->error;
     }

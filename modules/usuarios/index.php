@@ -34,7 +34,7 @@ $usuarios = find_all_users();
           <?php foreach ($usuarios as $user) : ?>
             <tr>
               <td><?= $user['id'] ?></td>
-              <td><?= htmlspecialchars($user['nome']) ?></td>
+              <td><?= htmlspecialchars($user['nome_completo']) ?></td>
               <td><?= htmlspecialchars($user['email']) ?></td>
               <td>
                 <span class="badge 
@@ -44,7 +44,7 @@ $usuarios = find_all_users();
                   <?= ucfirst($user['nivel_acesso']) ?>
                 </span>
               </td>
-              <td><?= date('d/m/Y H:i', strtotime($user['criado_em'])) ?></td>
+              <td><?= date('d/m/Y H:i', strtotime($user['data_registro'])) ?></td>
               <td>
                 <a href="view.php?id=<?= $user['id'] ?>" class="btn btn-sm btn-outline-primary">Ver</a>
                 <a href="edit.php?id=<?= $user['id'] ?>" class="btn btn-sm btn-outline-warning">Editar</a>

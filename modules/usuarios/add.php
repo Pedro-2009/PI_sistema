@@ -6,7 +6,7 @@ include(HEADER_TEMPLATE);
 // Processa o envio do formulário
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $data = [
-    'nome' => $_POST['nome'],
+    'nome_completo' => $_POST['nome'],
     'email' => $_POST['email'],
     'senha' => $_POST['senha'],
     'nivel_acesso' => $_POST['nivel_acesso']

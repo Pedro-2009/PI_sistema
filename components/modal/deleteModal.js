@@ -1,21 +1,17 @@
-document.addEventListener('DOMContentLoaded', function () {
-    const deleteButtons = document.querySelectorAll('.delete-btn');
-    const deleteModal = document.getElementById('deleteModal');
-    const deleteMessage = document.getElementById('deleteModalMessage');
-    const confirmBtn = document.getElementById('confirmDeleteBtn');
+document.addEventListener("DOMContentLoaded", () => {
 
-    if (!deleteModal) return;
+    document.querySelectorAll(".btn-delete").forEach(btn => {
+        btn.addEventListener("click", () => {
 
-    deleteButtons.forEach(btn => {
-        btn.addEventListener('click', () => {
-            const id = btn.getAttribute('data-id');
-            const title = btn.getAttribute('data-title');
+            const id = btn.getAttribute("data-id");
+            const module = btn.getAttribute("data-module");
 
-            deleteMessage.textContent = `Deseja realmente excluir "${title}"?`;
+            const modal = new bootstrap.Modal(document.getElementById("deleteModal"));
 
-            confirmBtn.href = `delete.php?id=${id}`;
+            // configura o link final
+            const deleteBtn = document.getElementById("confirm-delete-btn");
+            deleteBtn.href = `/PI_sistema-1/modules/${module}/delete.php?id=${id}`;
 
-            const modal = new bootstrap.Modal(deleteModal);
             modal.show();
         });
     });
