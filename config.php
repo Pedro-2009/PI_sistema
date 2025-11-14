@@ -19,7 +19,7 @@ define('PUBLIC_PATH', ROOT_PATH . '/public');
 // 🌐 CONFIGURAÇÃO DE URL BASE
 // ==========================
 
-define('BASE_URL', '/PI_sistema-1');
+define('BASE_URL', 'Projetointegrador/PI_sistema-1');
 
 // ==========================
 // 🧩 TEMPLATES GLOBAIS
