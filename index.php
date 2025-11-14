@@ -10,7 +10,7 @@ $noticias = find_all_news();
 
 <!-- Banner Rotativo Bootstrap -->
 <div id="carouselBanner" class="carousel slide mt-4" data-bs-ride="carousel">
-  <div class="carousel-inner" style="height: 350px;">
+  <div class="carousel-inner" style="height: 300px;">
 
     <div class="carousel-item active">
       <img src="<?= BASE_URL ?>/img/esporte.jpg" class="d-block w-100 rounded" alt="Banner 1"
@@ -72,7 +72,7 @@ $noticias = find_all_news();
 
 <!-- 📰 LISTAGEM DE NOTÍCIAS -->
 <div class="container pb-5">
-  <h2 class="mb-4 fw-bold">Últimas Notícias</h2>
+  <h2 class="mb-5 fw-bold">Últimas Notícias</h2>
 
   <div class="row g-4">
 

@@ -42,7 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <form method="POST" class="usuarios-form">
       <div class="mb-3">
         <label class="form-label fw-semibold">Nome completo</label>
-        <input type="text" name="nome" class="form-control border-2" placeholder="Digite seu nome" required>
+        <input type="text" name="nome_completo" class="form-control border-2" placeholder="Digite seu nome" required>
       </div>
 
       <div class="mb-3">
